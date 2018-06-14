@@ -14,13 +14,15 @@ def sigmoid(x):
 
 
 def LSTMCell(inputs, c, h, W, B):
-    gate_inputs = np.concatenate([inputs, h], axis=1) @ W + B
+    return LSTMCell_prestacked(np.concatenate([inputs, h], axis=1), c, W, B)
+
+
+def LSTMCell_prestacked(inputs, c, W, B):
+    gate_inputs = inputs @ W + B
 
     # i = input_gate, j = new_input, f = forget_gate, o = output_gate
     i, j, f, o = np.split(gate_inputs, 4, axis=1)
 
-    # Note that using `add` and `multiply` instead of `+` and `*` gives a
-    # performance improvement. So using those at the cost of readability.
     new_c = sigmoid(i) * np.tanh(j) + c * sigmoid(f)
     new_h = np.tanh(new_c) * sigmoid(o)
     return new_c, new_h
@@ -28,3 +30,7 @@ def LSTMCell(inputs, c, h, W, B):
 
 def reform_weights(compressed_weights):
     return np.hstack([U @ V.T for U, V in compressed_weights])
+
+
+def scale_rows(M, scale):
+    return M * scale[:, np.newaxis]

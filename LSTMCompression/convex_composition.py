@@ -81,7 +81,7 @@ def compress(Xs, weights, bias, rank, elements_per_batch, snapshot_num=None):
             print("Starting LSTSQ")
             assert np.isfinite(diff).all()
             assert np.isfinite(stacked).all()
-            update = splinalg.lstsq(stacked, -diff.ravel(), overwrite_a=True, overwrite_b=True)[0]
+            update = splinalg.lstsq(stacked, -diff.ravel())[0]
             print("Finished LSTSQ")
 
             expected_value = np.linalg.norm(diff.ravel() + stacked @ update) ** 2
